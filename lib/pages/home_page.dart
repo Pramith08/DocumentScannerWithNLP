@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
             child: ListBody(
               children: <Widget>[
                 Text(
-                  'Would you like to delete this credential?',
+                  'Would you like to delete this credential nigga?',
                   style: TextStyle(
                     color: Color(0xFF2D2A2E),
                     fontSize: 16,
