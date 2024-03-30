@@ -23,6 +23,8 @@ class HomePage extends StatefulWidget {
 double screenHeight = 0.0;
 double screenWidth = 0.0;
 
+// TextEditingController _documentNameController = TextEditingController();
+
 class _HomePageState extends State<HomePage> {
   List<dynamic> listDocumentNames = [];
   late TextEditingController _documentNameController;
@@ -117,10 +119,12 @@ class _HomePageState extends State<HomePage> {
   void getDocumentName(String uid) async {
     final userId = uid;
     List<dynamic> results = await getDocumentNames(userId);
+    if (mounted) {
+      setState(() {
+        listDocumentNames = results;
+      });
+    }
 
-    setState(() {
-      listDocumentNames = results;
-    });
     print("DocumentListDocument $listDocumentNames");
   }
 
@@ -160,42 +164,54 @@ class _HomePageState extends State<HomePage> {
         )
       ],
     );
+
     if (croppedFile != null) {
       imageCache.clear();
-      setState(() {
-        imageFile = File(croppedFile.path);
-      });
+      if (mounted) {
+        setState(() {
+          imageFile = File(croppedFile.path);
+        });
+      }
 
       try {
         showDialog(
           context: context,
-          builder: (context) => const Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFFC3BBBB),
-            ),
-          ),
+          builder: (context) {
+            if (!mounted) {
+              return Container(); // Return empty container if widget is disposed
+            }
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFFC3BBBB),
+              ),
+            );
+          },
         );
+
         final imageUploadSuccess = await createNewDocument(
           context,
           _documentNameController.text.trim(),
           imageFile!,
           uid,
         );
-        if (imageUploadSuccess) {
-          Navigator.pop(context);
-          mySnackBar(
-            context,
-            'Document created successfully',
-            Colors.green,
-          );
-          getDocumentName(uid);
-        } else {
-          Navigator.pop(context);
-          mySnackBar(
-            context,
-            'Failed to create document',
-            Colors.red,
-          );
+
+        Navigator.pop(context); // Close the dialog
+
+        if (mounted) {
+          if (imageUploadSuccess) {
+            mySnackBar(
+              context,
+              'Document created successfully',
+              Colors.green,
+            );
+            getDocumentName(uid);
+          } else {
+            mySnackBar(
+              context,
+              'Failed to create document',
+              Colors.red,
+            );
+          }
         }
       } catch (e) {
         mySnackBar(context, e.toString(), Colors.red);

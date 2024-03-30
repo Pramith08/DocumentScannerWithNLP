@@ -1,6 +1,8 @@
-// import 'dart:html';
+import 'dart:convert';
+// import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'dart:io';
-
+// import 'package:http/http.dart' as http;
 import 'package:docscanner/components/my_button.dart';
 import 'package:docscanner/components/my_custom_home_page_transition.dart';
 import 'package:docscanner/components/my_pdf_view.dart';
@@ -48,6 +50,57 @@ class _DocumentPageState extends State<DocumentPage> {
             currentListDocumentValues: listDocumentValues),
       ),
     );
+  }
+
+  Future<List<String>> fetchOutput(List<String> inputText) async {
+    try {
+      Dio dio = Dio();
+      Response response = await dio.post(
+        'http://10.0.2.2:8000/test', // Replace with your API URL
+        data: jsonEncode(<String, dynamic>{
+          'text': inputText,
+        }),
+      );
+      // print("response: $response");
+
+      if (response.statusCode == 200) {
+        List<String> text = List<String>.from(response.data['input']);
+
+        return text;
+        // return response.data['input'];
+      } else {
+        mySnackBar(context,
+            "${response.statusCode} : ${response.statusMessage}", Colors.red);
+        throw Exception(
+            'Failed to load output. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error connecting to server: $e');
+      mySnackBar(context, e.toString(), Colors.red);
+      throw Exception('Failed to connect to server: $e');
+    }
+  }
+
+  void getDataAndDisplayOutput() async {
+    List<String> newList = [];
+
+    final uId = widget.uId;
+    final documentName = widget.documentName;
+
+    for (String imageName in listDocumentValues) {
+      String imageUrl = '$uId/documentName/$documentName/$imageName';
+      newList.add(imageUrl);
+    }
+
+    print("List Document Names: $listDocumentValues");
+
+    try {
+      List<String> processedTexts = await fetchOutput(newList);
+
+      print("processed Text : \n$processedTexts");
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   @override
@@ -318,12 +371,13 @@ class _DocumentPageState extends State<DocumentPage> {
                     height: 50,
                     width: 50,
                     decoration: BoxDecoration(
-                        color: const Color(0xFFF4BBFF),
-                        borderRadius: BorderRadius.circular(
-                          15,
-                        )),
+                      color: const Color(0xFFF4BBFF),
+                      borderRadius: BorderRadius.circular(
+                        15,
+                      ),
+                    ),
                     child: IconButton(
-                      onPressed: _genPdf,
+                      onPressed: getDataAndDisplayOutput,
                       icon: const Icon(
                         color: Color(0xFF07070A),
                         Icons.download,
