@@ -61,13 +61,10 @@ class _DocumentPageState extends State<DocumentPage> {
           'text': inputText,
         }),
       );
-      // print("response: $response");
 
       if (response.statusCode == 200) {
         List<String> text = List<String>.from(response.data['input']);
-
         return text;
-        // return response.data['input'];
       } else {
         mySnackBar(context,
             "${response.statusCode} : ${response.statusMessage}", Colors.red);
