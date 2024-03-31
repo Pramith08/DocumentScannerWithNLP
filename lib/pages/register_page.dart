@@ -156,36 +156,25 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 Row(
                   children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                          color: Color(0xFFF4BBFF),
-                          borderRadius: BorderRadius.circular(
-                            15,
-                          )),
-                      child: IconButton(
-                        onPressed: back,
-                        icon: Icon(
-                          color: Color(0xFF07070A),
-                          Icons.arrow_back_ios_sharp,
-                        ),
+                    IconButton(
+                      onPressed: back,
+                      icon: Icon(
+                        color: Color(0xFFF4BBFF),
+                        Icons.arrow_back_rounded,
+                        size: 32,
                       ),
-                    ),
-                    SizedBox(
-                      width: screenWidth * 0.04,
                     ),
                     Text(
                       "New User",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 36,
+                        fontSize: 32,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: screenHeight * 0.05,
+                  height: screenHeight * 0.01,
                 ),
                 Expanded(
                   child: SingleChildScrollView(

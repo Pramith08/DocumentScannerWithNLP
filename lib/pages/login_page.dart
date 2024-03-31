@@ -140,13 +140,16 @@ class _LoginPageState extends State<LoginPage> {
               const Row(
                 children: [
                   Text(
-                    "Sign In",
-                    style: TextStyle(color: Colors.white, fontSize: 36),
+                    "Login In",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                    ),
                   ),
                 ],
               ),
               SizedBox(
-                height: screenHeight * 0.05,
+                height: screenHeight * 0.02,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -155,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Row(
                         children: [
                           SizedBox(
-                            width: 5,
+                            width: 1,
                           ),
                           Text(
                             "Email ID",
@@ -179,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                       const Row(
                         children: [
                           SizedBox(
-                            width: 5,
+                            width: 1,
                           ),
                           Text(
                             "Password",

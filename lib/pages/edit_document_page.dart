@@ -1,5 +1,7 @@
+import 'package:docscanner/components/my_custom_home_page_transition.dart';
 import 'package:docscanner/components/my_pdf_view.dart';
 import 'package:docscanner/components/my_snack_bar.dart';
+import 'package:docscanner/pages/home_page.dart';
 import 'package:docscanner/services/database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,14 @@ class _EditDocumentPageState extends State<EditDocumentPage> {
 
   void onSaveChanges() async {
     try {
+      showDialog(
+        context: context,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(
+            color: Color(0xFFF4BBFF),
+          ),
+        ),
+      );
       await updateImageOrder(
         widget.uId,
         widget.documentName,
@@ -40,9 +50,16 @@ class _EditDocumentPageState extends State<EditDocumentPage> {
         widget.currentListDocumentValues,
       );
       // Show success message or navigate back to previous screen
-      // Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pushReplacement(
+        context,
+        MyCustomHomePageRoute(
+          HomePage(),
+        ),
+      );
       mySnackBar(context, 'Image order updated successfully', Colors.green);
     } catch (e) {
+      Navigator.pop(context);
       mySnackBar(context, 'Failed to update image order', Colors.red);
     }
   }
@@ -67,50 +84,37 @@ class _EditDocumentPageState extends State<EditDocumentPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFF4BBFF),
-                        borderRadius: BorderRadius.circular(
-                          15,
-                        )),
-                    child: IconButton(
-                      onPressed: back,
-                      icon: const Icon(
-                        color: Color(0xFF07070A),
-                        Icons.arrow_back_ios_sharp,
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: back,
+                        icon: const Icon(
+                          color: Color(0xFFF4BBFF),
+                          Icons.arrow_back_rounded,
+                          size: 32,
+                        ),
                       ),
-                    ),
-                  ),
-                  Text(
-                    "Edit Document",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                    ),
-                  ),
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFF4BBFF),
-                        borderRadius: BorderRadius.circular(
-                          15,
-                        )),
-                    child: IconButton(
-                      onPressed: onSaveChanges,
-                      icon: const Icon(
-                        size: 27,
-                        color: Color(0xFF07070A),
-                        Icons.save_rounded,
+                      Text(
+                        "Edit Document",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                        ),
                       ),
+                    ],
+                  ),
+                  IconButton(
+                    onPressed: onSaveChanges,
+                    icon: const Icon(
+                      size: 27,
+                      color: Color(0xFFF4BBFF),
+                      Icons.save_rounded,
                     ),
                   ),
                 ],
               ),
               SizedBox(
-                height: screenHeight * 0.05,
+                height: screenHeight * 0.01,
               ),
               Expanded(
                 child: ReorderableGridView.builder(

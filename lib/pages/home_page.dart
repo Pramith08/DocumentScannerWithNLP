@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:docscanner/components/my_button.dart';
 import 'package:docscanner/components/my_custom_home_page_transition.dart';
 import 'package:docscanner/components/my_document_view.dart';
-import 'package:docscanner/components/my_icon_button.dart';
 import 'package:docscanner/components/my_snack_bar.dart';
 import 'package:docscanner/components/my_textfield.dart';
 import 'package:docscanner/pages/document_page.dart';
+import 'package:docscanner/services/auth_gate.dart';
 import 'package:docscanner/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   void logout() {
     FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(context, MyCustomHomePageRoute(AuthGate()));
   }
 
   Future<void> _showMyDialog(int index) async {
@@ -389,30 +390,30 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "My Documents",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: const Text(
+                      "My Documents",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                      ),
                     ),
                   ),
-                  MyIconButton(
+                  IconButton(
                     onPressed: () {
                       logout();
                     },
                     icon: const Icon(
                       Icons.logout_sharp,
-                      color: Colors.white,
-                      size: 34,
+                      color: Color(0xFFF4BBFF),
+                      size: 32,
                     ),
-                    buttonColor: Colors.transparent,
-                    buttonHeight: 50,
-                    buttonWidth: 50,
                   )
                 ],
               ),
               SizedBox(
-                height: screenHeight * 0.05,
+                height: screenHeight * 0.01,
               ),
               Expanded(
                 child: ListView.builder(
