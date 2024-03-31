@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future _displayRegisterBottomSheet(BuildContext context) {
+  Future _displayAddNewDocumentBottomSheet(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
     return showModalBottomSheet(
@@ -377,7 +377,7 @@ class _HomePageState extends State<HomePage> {
               width: 130,
               buttonText: "New Document",
               onTap: () {
-                _displayRegisterBottomSheet(context);
+                _displayAddNewDocumentBottomSheet(context);
               },
               buttonColor: const Color(0xFFF4BBFF),
             ),

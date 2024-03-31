@@ -28,7 +28,7 @@ Future<bool> createNewDocument(
   return false;
 }
 
-Future<bool> addNewDocument(
+Future<bool> addNewImage(
   BuildContext context,
   String docName,
   File image,
@@ -203,59 +203,67 @@ Future<File?> _downloadImageFromFirebaseStorage(String imagePath) async {
 
 Future<void> updateImageOrder(String userId, String documentName,
     List<String> newOrder, List<String> oldOrder) async {
-  try {
-    final storage = FirebaseStorage.instance;
-    final storageRef = storage.ref();
+  print("neworder-------------------: $newOrder");
+  print("oldorder-------------------: $oldOrder");
 
-    for (int i = 0; i < oldOrder.length; i++) {
-      final newElement = newOrder[i];
-      final oldElement = oldOrder[i];
+  if (oldOrder == newOrder) {
+    return;
+  } else {
+    try {
+      final storage = FirebaseStorage.instance;
+      final storageRef = storage.ref();
 
-      String newimageUrl = '$userId/documentName/$documentName/$newElement';
-      final newImageUrlRef = storageRef.child(newimageUrl);
-      final newImageData = await newImageUrlRef.getData();
+      for (int i = 0; i < oldOrder.length; i++) {
+        final newElement = newOrder[i];
+        final oldElement = oldOrder[i];
 
-      final uploadRef = storageRef
-          .child("$userId/documentName/$documentName/temp$oldElement");
+        String newimageUrl = '$userId/documentName/$documentName/$newElement';
+        final newImageUrlRef = storageRef.child(newimageUrl);
+        final newImageData = await newImageUrlRef.getData();
 
-      // print("NewImageData: $newImageData");
+        final uploadRef = storageRef
+            .child("$userId/documentName/$documentName/temp$oldElement");
 
-      await uploadRef.putData(newImageData!);
+        // print("NewImageData: $newImageData");
+
+        await uploadRef.putData(newImageData!);
+      }
+      for (int i = 0; i < oldOrder.length; i++) {
+        final oldElement = oldOrder[i];
+        await storageRef
+            .child("$userId/documentName/$documentName/$oldElement")
+            .delete();
+
+        print("lol$i: $oldElement");
+      }
+      for (int i = 0; i < oldOrder.length; i++) {
+        final newElement = newOrder[i];
+        final oldElement = oldOrder[i];
+        print("oldOrder$i: $newElement");
+        print("newOrder$i: $oldElement");
+
+        String newimageUrl =
+            '$userId/documentName/$documentName/temp$newElement';
+        final newImageUrlRef = storageRef.child(newimageUrl);
+        final newImageData = await newImageUrlRef.getData();
+
+        final uploadRef =
+            storageRef.child("$userId/documentName/$documentName/$newElement");
+
+        await uploadRef.putData(newImageData!);
+      }
+      for (int i = 0; i < oldOrder.length; i++) {
+        final oldElement = oldOrder[i];
+        await storageRef
+            .child("$userId/documentName/$documentName/temp$oldElement")
+            .delete();
+
+        print("lol$i: $oldElement");
+      }
+    } catch (e) {
+      print('Error updating image order: $e');
+      throw e;
     }
-    for (int i = 0; i < oldOrder.length; i++) {
-      final oldElement = oldOrder[i];
-      await storageRef
-          .child("$userId/documentName/$documentName/$oldElement")
-          .delete();
-
-      print("lol$i: $oldElement");
-    }
-    for (int i = 0; i < oldOrder.length; i++) {
-      final newElement = newOrder[i];
-      final oldElement = oldOrder[i];
-      print("oldOrder$i: $newElement");
-      print("newOrder$i: $oldElement");
-
-      String newimageUrl = '$userId/documentName/$documentName/temp$newElement';
-      final newImageUrlRef = storageRef.child(newimageUrl);
-      final newImageData = await newImageUrlRef.getData();
-
-      final uploadRef =
-          storageRef.child("$userId/documentName/$documentName/$newElement");
-
-      await uploadRef.putData(newImageData!);
-    }
-    for (int i = 0; i < oldOrder.length; i++) {
-      final oldElement = oldOrder[i];
-      await storageRef
-          .child("$userId/documentName/$documentName/temp$oldElement")
-          .delete();
-
-      print("lol$i: $oldElement");
-    }
-  } catch (e) {
-    print('Error updating image order: $e');
-    throw e;
   }
 }
 

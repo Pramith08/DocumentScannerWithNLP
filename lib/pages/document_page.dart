@@ -116,20 +116,6 @@ class _DocumentPageState extends State<DocumentPage> {
     print(listDocumentValues);
   }
 
-  void _genPdf() async {
-    final String userId = widget.uId;
-    List<String> documentValues = listDocumentValues;
-    final String documentName = widget.documentName;
-
-    final List<String> imagePaths = [];
-    for (int i = 0; i < listDocumentValues.length; i++) {
-      final value = documentValues[i];
-      final String url = "$userId/documentName/$documentName/$value";
-      imagePaths.add(url);
-    }
-    await generateAndDownloadPDF(imagePaths);
-  }
-
   _cropImage(File pickedImage) async {
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: pickedImage.path,
@@ -166,6 +152,8 @@ class _DocumentPageState extends State<DocumentPage> {
         )
       ],
     );
+
+    //image cropped
     if (croppedFile != null) {
       imageCache.clear();
       setState(() {
@@ -182,7 +170,7 @@ class _DocumentPageState extends State<DocumentPage> {
           ),
         );
 
-        final imageUploadSuccess = await addNewDocument(
+        final imageUploadSuccess = await addNewImage(
           context,
           widget.documentName,
           imageFile!,
@@ -230,7 +218,7 @@ class _DocumentPageState extends State<DocumentPage> {
     });
   }
 
-  Future _displayRegisterBottomSheet(BuildContext context) {
+  Future _displayAddNewImageBottomSheet(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
     return showModalBottomSheet(
@@ -322,7 +310,7 @@ class _DocumentPageState extends State<DocumentPage> {
               width: 130,
               buttonText: "Add Image",
               onTap: () {
-                _displayRegisterBottomSheet(context);
+                _displayAddNewImageBottomSheet(context);
               },
               buttonColor: const Color(0xFFF4BBFF),
             ),
