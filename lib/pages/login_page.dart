@@ -218,22 +218,20 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: screenHeight * 0.01,
               ),
-              Container(
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    fixedSize: const Size(double.infinity, 55),
-                  ),
-                  onPressed: () {
-                    // _permissionHandler(context);
-                    newUser();
-                  },
-                  child: const Text(
-                    "Not a user..?  Create new user!",
-                    style: TextStyle(
-                      color: Color(0xFFC3BBBB),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  fixedSize: const Size(double.infinity, 55),
+                ),
+                onPressed: () {
+                  // _permissionHandler(context);
+                  newUser();
+                },
+                child: const Text(
+                  "Not a user..?  Create new user!",
+                  style: TextStyle(
+                    color: Color(0xFFC3BBBB),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),

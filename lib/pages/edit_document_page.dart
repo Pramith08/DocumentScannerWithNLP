@@ -4,7 +4,7 @@ import 'package:docscanner/components/my_button.dart';
 import 'package:docscanner/components/my_custom_home_page_transition.dart';
 import 'package:docscanner/components/my_pdf_view.dart';
 import 'package:docscanner/components/my_snack_bar.dart';
-import 'package:docscanner/pages/document_page.dart';
+// import 'package:docscanner/pages/document_page.dart';
 import 'package:docscanner/pages/home_page.dart';
 import 'package:docscanner/services/database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -145,15 +145,16 @@ class _EditDocumentPageState extends State<EditDocumentPage> {
             Colors.green,
           );
           // getDocumentValue(widget.uId);
-          Navigator.pushReplacement(
-            context,
-            MyCustomHomePageRoute(
-              DocumentPage(
-                documentName: widget.documentName,
-                uId: widget.uId,
-              ),
-            ),
-          );
+          Navigator.pop(context);
+          // Navigator.pushReplacement(
+          //   context,
+          //   MyCustomHomePageRoute(
+          //     DocumentPage(
+          //       documentName: widget.documentName,
+          //       uId: widget.uId,
+          //     ),
+          //   ),
+          // );
         } else {
           mySnackBar(
             context,

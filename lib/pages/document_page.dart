@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:docscanner/components/my_button.dart';
 import 'package:docscanner/components/my_custom_home_page_transition.dart';
 import 'package:docscanner/components/my_pdf_view.dart';
 import 'package:docscanner/components/my_snack_bar.dart';
@@ -10,7 +11,7 @@ import 'package:flutter/material.dart';
 
 class DocumentPage extends StatefulWidget {
   final String documentName;
-  // final List<String> values;
+
   final String uId;
   const DocumentPage({
     super.key,
@@ -28,6 +29,7 @@ double screenWidth = 0.0;
 
 class _DocumentPageState extends State<DocumentPage> {
   List<String> listDocumentValues = [];
+  String nlpText = "Press The Button To Start Summarization";
   void back() {
     Navigator.pop(context);
   }
@@ -85,7 +87,19 @@ class _DocumentPageState extends State<DocumentPage> {
 
     try {
       List<String> processedTexts = await fetchOutput(newList);
-
+      if (processedTexts.isNotEmpty) {
+        String finalText = "";
+        for (String text in processedTexts) {
+          finalText = finalText + text;
+        }
+        if (mounted) {
+          setState(() {
+            nlpText = finalText;
+          });
+          Navigator.pop(context);
+          _displayNlpFunctionBottomSheet(context);
+        }
+      }
       print("processed Text : \n$processedTexts");
     } catch (e) {
       print('Error: $e');
@@ -106,6 +120,97 @@ class _DocumentPageState extends State<DocumentPage> {
       listDocumentValues = results;
     });
     print(listDocumentValues);
+  }
+
+  Future _displayNlpFunctionBottomSheet(BuildContext context) {
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+
+    return showModalBottomSheet(
+      isDismissible: false,
+      useSafeArea: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      backgroundColor: Colors.black,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10),
+        ),
+      ),
+      context: context,
+      builder: (context) => SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 5.0,
+              horizontal: 18,
+            ),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "NLP Functions",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: back,
+                        icon: const Icon(
+                          color: Color(0xFFF4BBFF),
+                          Icons.close,
+                          size: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  Container(
+                    // width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Color(0xffE6E1D8),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        nlpText,
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                          color: Color(0xFF2D2A2E),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.01,
+                  ),
+                  MyButton(
+                    height: 55,
+                    width: double.infinity,
+                    buttonText: "Start API",
+                    onTap: () {
+                      getDataAndDisplayOutput();
+                    },
+                    buttonColor: Color(0xFFF4BBFF),
+                  ),
+                  SizedBox(
+                    height: screenHeight * 0.02,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -132,19 +237,22 @@ class _DocumentPageState extends State<DocumentPage> {
                           size: 32,
                         ),
                       ),
-                      Text(
-                        widget.documentName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                        ),
-                      ),
                     ],
                   ),
                   Row(
                     children: [
                       IconButton(
-                        onPressed: getDataAndDisplayOutput,
+                        onPressed: () {
+                          _displayNlpFunctionBottomSheet(context);
+                        },
+                        icon: const Icon(
+                          color: Color(0xFFF4BBFF),
+                          Icons.manage_search_sharp,
+                          size: 32,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: null,
                         icon: const Icon(
                           color: Color(0xFFF4BBFF),
                           Icons.download,
@@ -162,6 +270,30 @@ class _DocumentPageState extends State<DocumentPage> {
                     ],
                   ),
                 ],
+              ),
+              SizedBox(
+                height: screenHeight * 0.01,
+              ),
+              Container(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF4BBFF),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    widget.documentName,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: Color(0xFF2D2A2E),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(
                 height: screenHeight * 0.01,

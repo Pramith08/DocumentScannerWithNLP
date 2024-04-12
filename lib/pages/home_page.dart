@@ -47,7 +47,12 @@ class _HomePageState extends State<HomePage> {
 
   void logout() {
     FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(context, MyCustomHomePageRoute(AuthGate()));
+    Navigator.pushReplacement(
+      context,
+      MyCustomHomePageRoute(
+        const AuthGate(),
+      ),
+    );
   }
 
   Future<void> _showMyDialog(int index) async {
@@ -273,12 +278,12 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   SizedBox(
-                    height: screenHeight * 0.03,
+                    height: screenHeight * 0.01,
                   ),
                   const Row(
                     children: [
                       SizedBox(
-                        width: 3,
+                        width: 1,
                       ),
                       Text(
                         "Document Name",
@@ -300,11 +305,11 @@ class _HomePageState extends State<HomePage> {
                     onChange: (p0) {},
                   ),
                   SizedBox(
-                    height: screenHeight * 0.02,
+                    height: screenHeight * 0.015,
                   ),
                   const Divider(),
                   SizedBox(
-                    height: screenHeight * 0.02,
+                    height: screenHeight * 0.005,
                   ),
                   const Row(
                     children: [
@@ -318,7 +323,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   SizedBox(
-                    height: screenHeight * 0.03,
+                    height: screenHeight * 0.01,
                   ),
                   Column(
                     children: [
@@ -328,19 +333,32 @@ class _HomePageState extends State<HomePage> {
                         buttonText: "Gallery",
                         onTap: () {
                           Navigator.pop(context);
-                          _imagePickFromGallery();
+                          if (_documentNameController.text.isEmpty) {
+                            mySnackBar(
+                                context, "Document name is empty", Colors.red);
+                            return;
+                          } else {
+                            _imagePickFromGallery();
+                          }
                         },
                         buttonColor: const Color(0xFFF4BBFF),
                       ),
                       SizedBox(
-                        height: screenHeight * 0.03,
+                        height: screenHeight * 0.01,
                       ),
                       MyButton(
                         height: 55,
                         width: double.infinity,
                         buttonText: "Camera",
                         onTap: () {
-                          _imagePickFromCamera();
+                          Navigator.pop(context);
+                          if (_documentNameController.text.isEmpty) {
+                            mySnackBar(
+                                context, "Document name is empty", Colors.red);
+                            return;
+                          } else {
+                            _imagePickFromCamera();
+                          }
                         },
                         buttonColor: const Color(0xFFF4BBFF),
                       ),
@@ -390,9 +408,9 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: const Text(
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Text(
                       "My Documents",
                       style: TextStyle(
                         color: Colors.white,
@@ -400,15 +418,29 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      logout();
-                    },
-                    icon: const Icon(
-                      Icons.logout_sharp,
-                      color: Color(0xFFF4BBFF),
-                      size: 32,
-                    ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          getDocumentName(uid);
+                        },
+                        icon: const Icon(
+                          Icons.replay,
+                          color: Color(0xFFF4BBFF),
+                          size: 32,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          logout();
+                        },
+                        icon: const Icon(
+                          Icons.logout_sharp,
+                          color: Color(0xFFF4BBFF),
+                          size: 32,
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
@@ -416,50 +448,56 @@ class _HomePageState extends State<HomePage> {
                 height: screenHeight * 0.01,
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: listDocumentNames.length,
-                  itemBuilder: (context, index) {
-                    String documentName = listDocumentNames[index];
-                    // List<String> values = listDocumentNames[index][1];
-                    return Slidable(
-                      endActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 4),
-                            child: MyButton(
-                              height: double.infinity,
-                              width: screenWidth * 0.4,
-                              buttonText: "Delete",
-                              buttonColor: Colors.red,
-                              onTap: () {
-                                _showMyDialog(index);
-                              },
-                            ),
-                          )
+                child: listDocumentNames.isEmpty
+                    ? ListView(
+                        children: const [
+                          MyListDocumentView(
+                            title: "No Documents To Display",
+                          ),
                         ],
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MyCustomHomePageRoute(
-                              DocumentPage(
-                                documentName: documentName,
-                                // values: values,
-                                uId: uid,
+                      )
+                    : ListView.builder(
+                        itemCount: listDocumentNames.length,
+                        itemBuilder: (context, index) {
+                          String documentName = listDocumentNames[index];
+                          return Slidable(
+                            endActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 4),
+                                  child: MyButton(
+                                    height: double.infinity,
+                                    width: screenWidth * 0.4,
+                                    buttonText: "Delete",
+                                    buttonColor: Colors.red,
+                                    onTap: () {
+                                      _showMyDialog(index);
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MyCustomHomePageRoute(
+                                    DocumentPage(
+                                      documentName: documentName,
+                                      uId: uid,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: MyListDocumentView(
+                                title: documentName,
                               ),
                             ),
                           );
                         },
-                        child: MyListDocumentView(
-                          title: documentName,
-                        ),
                       ),
-                    );
-                  },
-                ),
               )
             ],
           ),

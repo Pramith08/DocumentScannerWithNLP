@@ -15,7 +15,7 @@ class MyPdfView extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: Colors.white,
+          color: Color(0xffE6E1D8),
         ),
         child: Padding(
           padding: const EdgeInsets.all(4.0),

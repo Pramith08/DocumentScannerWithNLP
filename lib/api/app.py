@@ -13,6 +13,8 @@ async def testCase(request: Test):
     for i in request.text:
         processed_text.append(i)
         processed_text.append(newline)
+        processed_text.append("-------------------")
+    
     return {"input": processed_text}
 
 
