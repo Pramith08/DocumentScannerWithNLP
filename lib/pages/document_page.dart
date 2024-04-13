@@ -46,18 +46,49 @@ class _DocumentPageState extends State<DocumentPage> {
     );
   }
 
-  Future<List<String>> fetchOutput(List<String> inputText) async {
+  Future<String> fetchOutput(List<String> inputText) async {
     try {
       Dio dio = Dio();
+      print(inputText);
+      // print($inputText);
       Response response = await dio.post(
-        'http://10.0.2.2:8000/test', // Replace with your API URL
+        'http://10.0.2.2:8000/image_to_text', // Replace with your API URL
+        data: jsonEncode(<String, dynamic>{
+          'path': inputText,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        List<String> text = List<String>.from(response.data['text']);
+        String tempText = await fetchSummary(text);
+        return tempText;
+      } else {
+        mySnackBar(context,
+            "${response.statusCode} : ${response.statusMessage}", Colors.red);
+        throw Exception(
+            'Failed to load output. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error connecting to server: $e');
+      mySnackBar(context, e.toString(), Colors.red);
+      throw Exception('Failed to connect to server: $e');
+    }
+  }
+
+  Future<String> fetchSummary(List<String> inputText) async {
+    try {
+      Dio dio = Dio();
+      print(inputText);
+      // print($inputText);
+      Response response = await dio.post(
+        'https://abhinandanb03-doc-scanner.hf.space/summarize', // Replace with your API URL
         data: jsonEncode(<String, dynamic>{
           'text': inputText,
         }),
       );
 
       if (response.statusCode == 200) {
-        List<String> text = List<String>.from(response.data['input']);
+        String text = response.data['summary'];
         return text;
       } else {
         mySnackBar(context,
@@ -86,15 +117,15 @@ class _DocumentPageState extends State<DocumentPage> {
     print("List Document Names: $listDocumentValues");
 
     try {
-      List<String> processedTexts = await fetchOutput(newList);
+      String processedTexts = await fetchOutput(newList);
       if (processedTexts.isNotEmpty) {
-        String finalText = "";
-        for (String text in processedTexts) {
-          finalText = finalText + text;
-        }
+        // String finalText = "";
+        // for (String text in processedTexts) {
+        //   finalText = finalText + text;
+        // }
         if (mounted) {
           setState(() {
-            nlpText = finalText;
+            nlpText = processedTexts;
           });
           Navigator.pop(context);
           _displayNlpFunctionBottomSheet(context);
