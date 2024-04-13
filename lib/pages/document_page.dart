@@ -29,7 +29,8 @@ double screenWidth = 0.0;
 
 class _DocumentPageState extends State<DocumentPage> {
   List<String> listDocumentValues = [];
-  String nlpText = "Press The Button To Start Summarization";
+  // String nlpText = "Press The Button To Start Summarization";
+  String nlpText = "";
   void back() {
     Navigator.pop(context);
   }
@@ -184,7 +185,7 @@ class _DocumentPageState extends State<DocumentPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "NLP Functions",
+                        "Summarize the document",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 26,
@@ -226,7 +227,7 @@ class _DocumentPageState extends State<DocumentPage> {
                   MyButton(
                     height: 55,
                     width: double.infinity,
-                    buttonText: "Start API",
+                    buttonText: "Start Summarization",
                     onTap: () {
                       getDataAndDisplayOutput();
                     },
