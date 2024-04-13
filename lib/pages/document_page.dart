@@ -53,7 +53,7 @@ class _DocumentPageState extends State<DocumentPage> {
       print(inputText);
       // print($inputText);
       Response response = await dio.post(
-        'http://10.0.2.2:8000/image_to_text', // Replace with your API URL
+        'https://abhinandanb03-doc-scanner.hf.space/image_to_text', // Replace with your API URL
         data: jsonEncode(<String, dynamic>{
           'path': inputText,
         }),
